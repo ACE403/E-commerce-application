@@ -1,0 +1,100 @@
+import 'package:ecomm/features/authentication/controllers/login/login_controller.dart';
+import 'package:ecomm/features/authentication/screens/password_configuration/forget_password.dart';
+import 'package:ecomm/features/authentication/screens/signup/signup.dart';
+import 'package:ecomm/navigation_menu.dart';
+import 'package:ecomm/utils/constants/text_strings.dart';
+import 'package:ecomm/utils/validators/validator.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
+
+import '../../../../../utils/constants/sizes.dart';
+
+class LoginForm extends StatelessWidget {
+  const LoginForm({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = Get.put(LoginController());
+
+    return Form(
+      key: controller.loginFormKey,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: TSizes.spaceBtwSections),
+        child: Column(
+          children: [
+            //Email
+            TextFormField(
+              controller: controller.email,
+              validator: (value) => Validator.validateEmail(value),
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Iconsax.direct_right),
+                label: Text(
+                  TTexts.Email,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: TSizes.spaceBtwInputFields,
+            ),
+            //Password
+            Obx(
+              () => TextFormField(
+                validator: (value) => Validator.validatePassword(value),
+                controller: controller.password,
+                obscureText: controller.hidePassword.value,
+                decoration: InputDecoration(
+                    labelText: TTexts.password,
+                    prefixIcon: Icon(Iconsax.password_check),
+                    suffixIcon: IconButton(
+                        onPressed: () => controller.hidePassword.value =
+                            !controller.hidePassword.value,
+                        icon: Icon(controller.hidePassword.value
+                            ? Iconsax.eye_slash
+                            : Iconsax.eye))),
+              ),
+            ),
+            SizedBox(height: TSizes.spaceBtwInputFields / 2),
+            //Remember me? and forget password
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Obx(() => Checkbox(
+                        value: controller.rememberMe.value,
+                        onChanged: (value) => controller.rememberMe.value =
+                            !controller.rememberMe.value)),
+                    Text(TTexts.Rememberme)
+                  ],
+                ),
+                TextButton(
+                    onPressed: () => Get.to(() => ForgetPassword()),
+                    child: Text(TTexts.ForgetPassword)),
+              ],
+            ),
+            SizedBox(
+              height: TSizes.spaceBtwSections,
+            ),
+            SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                    onPressed: controller.emailAndPasswordSignIn,
+                    child: Text(TTexts.Signin))),
+            SizedBox(
+              height: TSizes.spaceBtwItems,
+            ),
+            SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                    onPressed: () => Get.to(() => Signup()),
+                    child: Text(TTexts.createaccount))),
+          ],
+        ),
+      ),
+    );
+  }
+}
